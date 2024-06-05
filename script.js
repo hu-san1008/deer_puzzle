@@ -174,8 +174,8 @@ function drawAll(){
 window.addEventListener('mousedown', (ev) => {
     if(ev.button != 0) return; // 左クリック以外は無視
 
-    const rect = can.getBoundingClientRect();
-    let ps = pieces.filter(piece => piece.IsClick(ev.clientX - rect.left, ev.clientY - rect.top) );
+    const canvasRect = can.getBoundingClientRect();
+    let ps = pieces.filter(piece => piece.IsClick(ev.clientX - canvasRect.left, ev.clientY - canvasRect.top) );
     if(ps.length == 0){
         console.log('どれもクリックされていない');
         return;
@@ -189,87 +189,49 @@ window.addEventListener('mousedown', (ev) => {
 
 window.addEventListener('mousemove', (ev) => {
     if(movingPiece != null){
-        const rect = can.getBoundingClientRect();
-        let newX = ev.clientX - rect.left - pieceSize * 0.75;
-        let newY = ev.clientY - rect.top - pieceSize * 0.75;
-
-        // 見えない位置に移動してしまうのを防ぐ
-        if(newX <  - pieceSize / 2) newX =  - pieceSize / 2;
-        if(newY <  - pieceSize / 2) newY =  - pieceSize / 2;
-        if(newX > can.width - pieceSize / 2) newX = can.width - pieceSize / 2;
-        if(newY > can.height - pieceSize / 2) newY = can.height - pieceSize / 2;
-
-        movingPiece.X = newX;
-        movingPiece.Y = newY;
+        const canvasRect = can.getBoundingClientRect();
+        movingPiece.X = ev.clientX - canvasRect.left - pieceSize / 2;
+        movingPiece.Y = ev.clientY - canvasRect.top - pieceSize / 2;
 
         drawAll();
     }
 });
 
 window.addEventListener('mouseup', (ev) => {
-    if(movingPiece != null){
-        let col = Math.round(movingPiece.X / pieceSize);
-        let row = Math.round(movingPiece.Y / pieceSize);
-        
+    if(movingPiece == null) return;
 
-        if(col < 0) col = 0;
-        if(row < 0) row = 0;
+    // ドロップ時の処理
+    if(movingPiece.Check()){
+        // 正しい位置に置かれた場合、座標をスナップ
+        movingPiece.X = movingPiece.OriginalCol * pieceSize;
+        movingPiece.Y = movingPiece.OriginalRow * pieceSize;
+    } else {
+        // 正しい位置でない場合、元の位置に戻す
+        movingPiece.X = oldX;
+        movingPiece.Y = oldY;
+    }
 
-        if(row < rowMax && col < colMax){
-            let ps = pieces.filter(piece => piece.X == col * pieceSize && piece.Y == row * pieceSize);
-            if(ps.length == 0){
-                movingPiece.X = col * pieceSize;
-                movingPiece.Y = row * pieceSize;
-            } else {
-                movingPiece.X = oldX;
-                movingPiece.Y = oldY;
-            }
-        }
+    drawAll();
+    movingPiece = null;
 
-        movingPiece = null;
-        drawAll();
-        check(); // 完成したかのチェック
+    // パズルが完成しているかチェック
+    if(checkCompletion()){
+        alert("パズル完成！");
     }
 });
 
-let timer = null;
-let time = 0;
-let $time = document.getElementById('time');
-
-function shuffle(){
-    let arr = [];
-    pieces.forEach(piece => arr.push(piece));
-
-    for(let row = 0; row < rowMax; row++){
-        for(let col = 0; col < colMax; col++){
-            let r = Math.floor(Math.random() * arr.length);
-            arr[r].X = col * pieceSize;
-            arr[r].Y = row * pieceSize;
-            arr.splice(r, 1);
-        }
-    }
+function shuffle() {
+    // ピースの位置をランダムに配置
+    pieces.forEach(piece => {
+        let x = Math.floor(Math.random() * colMax) * pieceSize;
+        let y = Math.floor(Math.random() * rowMax) * pieceSize;
+        piece.X = x;
+        piece.Y = y;
+    });
     drawAll();
-
-    // 時間をカウント
-    time = 0;
-    clearInterval(timer);
-    timer = setInterval(() => {
-        time++;
-        $time.style.color = '#000';
-        $time.innerHTML = `${time} 秒`;
-    }, 1000);
 }
 
-function check(){
-    let ok = true;
-    for(let i = 0; i < pieces.length; i++){
-        if(!pieces[i].Check()){
-            ok = false;
-            break;
-        }
-    }
-    if(ok){
-        clearInterval(timer);
-        $time.style.color = '#f00'; // タイムを赤で表示
-    }
+function checkCompletion() {
+    // 全てのピースが正しい位置にあるか確認
+    return pieces.every(piece => piece.Check());
 }

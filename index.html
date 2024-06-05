@@ -5,6 +5,14 @@
 <title>奈良の鹿さんパズル</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
+    body {
+        background-color: bisque;
+    }
+    header {
+        background-color: rgb(116, 215, 240);
+        padding: 10px;
+        text-align: center;
+    }
     #shuffle {
         width: 100px;
         margin-left: 20px;
@@ -16,30 +24,23 @@
         margin-left: 20px;
         font-weight: bold;
     }
-    #body{
-    background-color: bisque;
-    }
-    #header{
-        background-color: rgb(116, 215, 240);
-    }
 </style>
 </head>
- 
 <body>
 
 <header>
-<h2>鹿パズル</h2>
+    <h2>鹿パズル</h2>
 </header>
 
 <p>
-    <button id = "shuffle" onclick="shuffle()">シャッフル</button>
-    <span id = "time"></span>
+    <button id="shuffle" onclick="shuffle()">シャッフル</button>
+    <span id="time"></span>
 </p>
-<p id = "how-to-play">各ピースはドラッグ＆ドロップで移動できます。</p>
- 
+<p id="how-to-play">各ピースはドラッグ＆ドロップで移動できます。</p>
+
 <canvas id="can"></canvas>
- 
+
 <script src="script.js"></script>
- 
+
 </body>
 </html>
