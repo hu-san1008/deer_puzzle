@@ -1,11 +1,13 @@
 const pieceSize = 80;
+const puzzleWidth = 480; // パズルの幅
+const puzzleHeight = 480; // パズルの高さ
 
 let can = document.getElementById('can');
 let ctx = can.getContext('2d');
 let pieces = []; // Pieceオブジェクトを格納する変数
 
-let colMax = 0; // ピースは横に何個並ぶか？
-let rowMax = 0; // ピースは縦に何個並ぶか？
+let colMax = puzzleWidth / pieceSize; // 横に並ぶピースの数
+let rowMax = puzzleHeight / pieceSize; // 縦に並ぶピースの数
 
 class Piece {
     constructor(image, outline, x, y){
@@ -44,13 +46,9 @@ class Piece {
 window.onload = async() => {
     let sourceImage = await createSourceImage(); // 後述
 
-    // ピースは縦横何列必要か？
-    colMax = Math.floor(sourceImage.width / pieceSize);
-    rowMax = Math.floor(sourceImage.height / pieceSize);
-
-    // canvasのサイズはピースが占める面積の2倍とする
-    can.width = colMax * pieceSize * 2;
-    can.height = rowMax * pieceSize * 2;
+    // canvasのサイズを固定
+    can.width = puzzleWidth;
+    can.height = puzzleHeight;
 
     pieces = [];
     for(let row = 0; row < rowMax; row++){
@@ -68,8 +66,18 @@ async function createSourceImage(){
     let image = new Image();
     return await new Promise(resolve => {
         image.src = 'deer.png';
-        image.onload =() => {
-            resolve(image);
+        image.onload = () => {
+            // 画像を固定サイズにリサイズ
+            let canvas = document.createElement('canvas');
+            canvas.width = puzzleWidth;
+            canvas.height = puzzleHeight;
+            let ctx = canvas.getContext('2d');
+            ctx.drawImage(image, 0, 0, puzzleWidth, puzzleHeight);
+            let resizedImage = new Image();
+            resizedImage.src = canvas.toDataURL("image/png");
+            resizedImage.onload = () => {
+                resolve(resizedImage);
+            };
         }
     });
 }
@@ -146,7 +154,7 @@ async function createImage(base64){
     let image = new Image();
     return await new Promise(resolve => {
         image.src = base64;
-        image.onload =() => {
+        image.onload = () => {
             resolve(image);
         }
     });
@@ -176,15 +184,15 @@ window.addEventListener('mousedown', (ev) => {
 
     const canvasRect = can.getBoundingClientRect();
     let ps = pieces.filter(piece => piece.IsClick(ev.clientX - canvasRect.left, ev.clientY - canvasRect.top) );
-    if(ps.length == 0){
-        console.log('どれもクリックされていない');
-        return;
-    }
+    if(ps.length == 0) return;
+    movingPiece = ps.pop();
 
-    console.log(`${ps[0].X}, ${ps[0].Y}`);
-    movingPiece = ps[0];
-    oldX = ps[0].X;
-    oldY = ps[0].Y;
+    oldX = movingPiece.X;
+    oldY = movingPiece.Y;
+
+    // 動かしているピースを手前に描画するため、いったん配列から削除して最後に追加する
+    pieces = pieces.filter(piece => piece != movingPiece);
+    pieces.push(movingPiece);
 });
 
 window.addEventListener('mousemove', (ev) => {
