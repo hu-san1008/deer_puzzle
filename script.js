@@ -37,7 +37,7 @@ class Piece {
         );
     }
 
-    Check() {
+    check() {
         return (
             this.X >= this.OriginalCol * pieceSize - pieceSize / 2 &&
             this.X <= this.OriginalCol * pieceSize + pieceSize / 2 &&
@@ -68,7 +68,7 @@ function createPiece(image, col, row) {
 function initializePieces(image) {
     pieces = [];
     for (let row = 0; row < rowMax; row++) {
-        for (let col = 0; colMax; col++) {
+        for (let col = 0; col < colMax; col++) {
             createPiece(image, col, row);
         }
     }
@@ -90,19 +90,19 @@ window.addEventListener('mousedown', (ev) => {
         y >= p.Y && y <= p.Y + pieceSize
     );
 
-    if(ps.length == 0) return;
+    if (ps.length === 0) return;
     movingPiece = ps.pop();
 
     oldX = movingPiece.X;
     oldY = movingPiece.Y;
 
     // 動かしているピースを手前に描画するため、いったん配列から削除して最後に追加する
-    pieces = pieces.filter(piece => piece != movingPiece);
+    pieces = pieces.filter(piece => piece !== movingPiece);
     pieces.push(movingPiece);
 });
 
 window.addEventListener('mousemove', (ev) => {
-    if(movingPiece != null){
+    if (movingPiece != null) {
         const canvasRect = can.getBoundingClientRect();
         movingPiece.X = ev.clientX - canvasRect.left - pieceSize / 2;
         movingPiece.Y = ev.clientY - canvasRect.top - pieceSize / 2;
@@ -112,10 +112,10 @@ window.addEventListener('mousemove', (ev) => {
 });
 
 window.addEventListener('mouseup', (ev) => {
-    if(movingPiece == null) return;
+    if (movingPiece == null) return;
 
     // ドロップ時の処理
-    if(movingPiece.Check()){
+    if (movingPiece.check()) {
         // 正しい位置に置かれた場合、座標をスナップ
         movingPiece.X = movingPiece.OriginalCol * pieceSize;
         movingPiece.Y = movingPiece.OriginalRow * pieceSize;
@@ -129,7 +129,7 @@ window.addEventListener('mouseup', (ev) => {
     movingPiece = null;
 
     // パズルが完成しているかチェック
-    if(checkCompletion()){
+    if (checkCompletion()) {
         alert("パズル完成！");
     }
 });
@@ -147,7 +147,7 @@ function shuffle() {
 
 function checkCompletion() {
     // 全てのピースが正しい位置にあるか確認
-    return pieces.every(piece => piece.Check());
+    return pieces.every(piece => piece.check());
 }
 
 createSourceImage(initializePieces);
