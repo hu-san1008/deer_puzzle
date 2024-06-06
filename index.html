@@ -1,44 +1,81 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<title>奈良の鹿さんパズル</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-    body {
-        background-color: bisque;
-    }
-    header {
-        background-color: rgb(116, 215, 240);
-        padding: 10px;
-        text-align: center;
-    }
-    #shuffle {
-        width: 100px;
-        margin-left: 20px;
-    }
-    #how-to-play {
-        margin-left: 20px;
-    }
-    #time {
-        margin-left: 20px;
-        font-weight: bold;
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deer Puzzle</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('tukue.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+        #header {
+            background-color: #a5d544;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #header h1 {
+            font-size: 24px;
+            color: white;
+            margin: 0;
+        }
+        #header nav button {
+            background-color: gray;
+            color: white;
+            font-size: 18px;
+            border: none;
+            padding: 10px 20px;
+            margin-left: 10px;
+        }
+        #puzzleContainer {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        #canvas {
+            border: 1px solid #000;
+            background-color: #F5F5DC;
+            max-width: 100%;
+            height: auto;
+        }
+        #linkImage {
+            display: block;
+            margin: 20px auto;
+        }
+        .caption {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
 
-<header>
-    <h2>鹿パズル</h2>
-</header>
+<div id="header">
+    <h1>Deer Puzzle</h1>
+    <nav>
+        <button class="btn btn-light">Home</button>
+        <button class="btn btn-light" onclick="shuffle()">選択</button>
+    </nav>
+</div>
 
-<p>
-    <button id="shuffle" onclick="shuffle()">シャッフル</button>
-    <span id="time"></span>
-</p>
-<p id="how-to-play">各ピースはドラッグ＆ドロップで移動できます。</p>
+<p class="text-center">注意：ブラウザバックをするとリセットされます</p>
 
-<canvas id="can"></canvas>
+<div id="puzzleContainer">
+    <canvas id="canvas"></canvas>
+</div>
+
+<div class="caption">
+    <img id="linkImage" src="line_image.png" alt="Link Image" usemap="#linkmap">
+    <p>スタッフ作りました</p>
+</div>
+<map name="linkmap">
+    <area shape="rect" coords="34,44,270,350" alt="link" href="http://example.com">
+</map>
 
 <script src="script.js"></script>
 

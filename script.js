@@ -1,189 +1,95 @@
+const puzzleWidth = 480;
+const puzzleHeight = 480;
 const pieceSize = 80;
-const puzzleWidth = 480; // パズルの幅
-const puzzleHeight = 480; // パズルの高さ
+const colMax = puzzleWidth / pieceSize;
+const rowMax = puzzleHeight / pieceSize;
 
-let can = document.getElementById('can');
+let can = document.getElementById('canvas');
 let ctx = can.getContext('2d');
-let pieces = []; // Pieceオブジェクトを格納する変数
 
-let colMax = puzzleWidth / pieceSize; // 横に並ぶピースの数
-let rowMax = puzzleHeight / pieceSize; // 縦に並ぶピースの数
+can.width = puzzleWidth;
+can.height = puzzleHeight;
+
+let pieces = [];
+let movingPiece = null;
+let oldX, oldY;
 
 class Piece {
-    constructor(image, outline, x, y){
-        this.Image = image;
-        this.Outline = outline;
+    constructor(image, x, y, originalCol, originalRow) {
+        this.image = image;
         this.X = x;
         this.Y = y;
-
-        this.OriginalCol = Math.round(x / pieceSize); // 本来の位置
-        this.OriginalRow = Math.round(y / pieceSize);
+        this.OriginalCol = originalCol;
+        this.OriginalRow = originalRow;
     }
 
-    Draw(){
-        ctx.drawImage(this.Image, this.X, this.Y);
-        ctx.drawImage(this.Outline, this.X, this.Y);
+    draw() {
+        ctx.drawImage(
+            this.image,
+            this.OriginalCol * pieceSize, 
+            this.OriginalRow * pieceSize, 
+            pieceSize, 
+            pieceSize, 
+            this.X, 
+            this.Y, 
+            pieceSize, 
+            pieceSize
+        );
     }
 
-    IsClick(x, y){
-        let s = pieceSize / 4;
-        if(x < this.X + s) return false;
-        if(this.X + s * 5 < x) return false;
-        if(y < this.Y + s) return false;
-        if(this.Y + s * 5 < y) return false;
-
-        return true;
-    }
-
-    Check(){
-        // ピースが正しい位置にあるか確認
-        let col = Math.round(this.X / pieceSize);
-        let row = Math.round(this.Y / pieceSize);
-        return this.OriginalCol === col && this.OriginalRow === row;
+    Check() {
+        return (
+            this.X >= this.OriginalCol * pieceSize - pieceSize / 2 &&
+            this.X <= this.OriginalCol * pieceSize + pieceSize / 2 &&
+            this.Y >= this.OriginalRow * pieceSize - pieceSize / 2 &&
+            this.Y <= this.OriginalRow * pieceSize + pieceSize / 2
+        );
     }
 }
 
-window.onload = async() => {
-    let sourceImage = await createSourceImage(); // 後述
+function createSourceImage(callback) {
+    let img = new Image();
+    img.onload = () => {
+        let canvas = document.createElement('canvas');
+        let ctx = canvas.getContext('2d');
+        canvas.width = puzzleWidth;
+        canvas.height = puzzleHeight;
+        ctx.drawImage(img, 0, 0, puzzleWidth, puzzleHeight);
+        callback(canvas);
+    };
+    img.src = 'deer.png';
+}
 
-    // canvasのサイズを固定
-    can.width = puzzleWidth;
-    can.height = puzzleHeight;
+function createPiece(image, col, row) {
+    let piece = new Piece(image, col * pieceSize, row * pieceSize, col, row);
+    pieces.push(piece);
+}
 
+function initializePieces(image) {
     pieces = [];
-    for(let row = 0; row < rowMax; row++){
-        for(let col = 0; col < colMax; col++){
-            let image = await createPiece(sourceImage, row, col, rowMax, colMax, false); // 後述
-            let outline = await createPiece(sourceImage, row, col, rowMax, colMax, true);
-            pieces.push(new Piece(image, outline, col * pieceSize, row * pieceSize));
+    for (let row = 0; row < rowMax; row++) {
+        for (let col = 0; colMax; col++) {
+            createPiece(image, col, row);
         }
     }
-    drawAll(); // 写真指定
-    shuffle(); // ピースをシャッフル
+    shuffle();
 }
 
-async function createSourceImage(){
-    let image = new Image();
-    return await new Promise(resolve => {
-        image.src = 'deer.png';
-        image.onload = () => {
-            // 画像を固定サイズにリサイズ
-            let canvas = document.createElement('canvas');
-            canvas.width = puzzleWidth;
-            canvas.height = puzzleHeight;
-            let ctx = canvas.getContext('2d');
-            ctx.drawImage(image, 0, 0, puzzleWidth, puzzleHeight);
-            let resizedImage = new Image();
-            resizedImage.src = canvas.toDataURL("image/png");
-            resizedImage.onload = () => {
-                resolve(resizedImage);
-            };
-        }
-    });
-}
-
-async function createPiece(sourceImage, row, col, rowMax, colMax, outlineOnly){
-    let canvas = document.createElement('canvas');
-    let ctx = canvas.getContext('2d');
-
-    let s = pieceSize / 4;
-
-    canvas.width = s * 6;
-    canvas.height = s * 6;
-
-    if(ctx == null) return;
-
-    ctx.beginPath();
-    ctx.moveTo(s, s);
-    ctx.lineTo(s * 2, s);
-
-    if(row > 0){ // row == 0 のときは上辺には凹凸をつけない
-        if((row + col) % 2 == 0)
-            ctx.arc(s * 3, s, s, Math.PI, Math.PI * 2, false); // 凸
-        else
-            ctx.arc(s * 3, s, s, Math.PI, Math.PI * 2, true); // 凹
-    }
-
-    ctx.lineTo(s * 5, s);
-    ctx.lineTo(s * 5, s * 2);
-
-    if(col < colMax - 1){ // col == colMax - 1 のときは右辺には凹凸をつけない
-        if((row + col) % 2 == 1)
-            ctx.arc(s * 5, s * 3, s, Math.PI * 3 / 2, Math.PI / 2, false); // 凸
-        else
-            ctx.arc(s * 5, s * 3, s, Math.PI * 3 / 2, Math.PI / 2, true); // 凹
-    }
-
-    ctx.lineTo(s * 5, s * 5);
-    ctx.lineTo(s * 4, s * 5);
-
-    if(row < rowMax - 1){ // row == rowMax - 1 のときは下辺には凹凸をつけない
-        if((row + col) % 2 == 0)
-            ctx.arc(s * 3, s * 5, s, Math.PI * 0, Math.PI, false); // 凸
-        else
-            ctx.arc(s * 3, s * 5, s, Math.PI * 0, Math.PI, true); // 凹
-    }
-
-    ctx.lineTo(s, s * 5);
-    ctx.lineTo(s, s * 4);
-
-    if(col > 0){ // col == 0 のときは左辺には凹凸をつけない
-        if((row + col) % 2 == 1)
-            ctx.arc(s, s * 3, s, Math.PI / 2, Math.PI * 3 / 2, false); // 凸
-        else
-            ctx.arc(s, s * 3, s, Math.PI / 2, Math.PI * 3 / 2, true); // 凹
-    }
-
-    ctx.closePath();
-    ctx.clip();
-
-    ctx.strokeStyle = '#fff'; // 輪郭は白
-
-    if(outlineOnly)
-        ctx.stroke();
-    else
-        ctx.drawImage(sourceImage, s - s * 4 * col, s - s * 4 * row);
-
-    let base64 = canvas.toDataURL("image/png", 1); // PNGなら"image/png"
-    canvas.remove();
-
-    return await createImage(base64);
-}
-
-async function createImage(base64){
-    let image = new Image();
-    return await new Promise(resolve => {
-        image.src = base64;
-        image.onload = () => {
-            resolve(image);
-        }
-    });
-}
-
-let movingPiece = null; // 現在移動中のピース
-let oldX = 0; // 現在移動中のピースの移動前のX座標
-let oldY = 0; // 現在移動中のピースの移動前のY座標
-
-function drawAll(){
-    ctx.clearRect(0, 0, can.width, can.height); // いったん全消去
-    let s = pieceSize / 4;
-    ctx.strokeStyle = '#000';
-    ctx.strokeRect(s, s, pieceSize * colMax, pieceSize * rowMax); // 完成形が存在する部分を黒枠で囲む
-
-    pieces.forEach(piece => {
-        piece.Draw();
-    });
-
-    // 移動中のピースがあれば描画する
-    if(movingPiece != null)
-        movingPiece.Draw();
+function drawAll() {
+    ctx.clearRect(0, 0, can.width, can.height);
+    pieces.forEach(piece => piece.draw());
 }
 
 window.addEventListener('mousedown', (ev) => {
-    if(ev.button != 0) return; // 左クリック以外は無視
+    let canvasRect = can.getBoundingClientRect();
+    let x = ev.clientX - canvasRect.left;
+    let y = ev.clientY - canvasRect.top;
 
-    const canvasRect = can.getBoundingClientRect();
-    let ps = pieces.filter(piece => piece.IsClick(ev.clientX - canvasRect.left, ev.clientY - canvasRect.top) );
+    let ps = pieces.filter(p => 
+        x >= p.X && x <= p.X + pieceSize && 
+        y >= p.Y && y <= p.Y + pieceSize
+    );
+
     if(ps.length == 0) return;
     movingPiece = ps.pop();
 
@@ -243,3 +149,5 @@ function checkCompletion() {
     // 全てのピースが正しい位置にあるか確認
     return pieces.every(piece => piece.Check());
 }
+
+createSourceImage(initializePieces);
