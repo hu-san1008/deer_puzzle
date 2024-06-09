@@ -1,0 +1,5 @@
+#puzzle-container {
+    grid-template-columns: repeat(3, 200px);
+    grid-template-rows: repeat(3, 200px);
+    width: 350px;
+    height: 350px;}
