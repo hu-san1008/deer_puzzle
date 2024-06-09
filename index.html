@@ -1,83 +1,50 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deer Puzzle</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-image: url('tukue.png');
-            background-size: cover;
-            background-repeat: no-repeat;
-        }
-        #header {
-            background-color: #a5d544;
-            padding: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        #header h1 {
-            font-size: 24px;
-            color: white;
-            margin: 0;
-        }
-        #header nav button {
-            background-color: gray;
-            color: white;
-            font-size: 18px;
-            border: none;
-            padding: 10px 20px;
-            margin-left: 10px;
-        }
-        #puzzleContainer {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        #canvas {
-            border: 1px solid #000;
-            background-color: #F5F5DC;
-            max-width: 100%;
-            height: auto;
-        }
-        #linkImage {
-            display: block;
-            margin: 20px auto;
-        }
-        .caption {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-    </style>
-</head>
-<body>
+  <head>
+    <meta charset="utf-8" />
+    <title>AnimalPuzzle</title>
 
-<div id="header">
-    <h1>Deer Puzzle</h1>
-    <nav>
-        <button class="btn btn-light">Home</button>
-        <button class="btn btn-light" onclick="shuffle()">選択</button>
-    </nav>
-</div>
+    <header>
+      <div class="logo">AnimalPuzzle</div>
+    </header>
+    <h3>5分以内に写真を完成させよう！</h3>
 
-<p class="text-center">注意：ブラウザバックをするとリセットされます</p>
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <link rel="stylesheet" media="screen" href="style.css" />
+  </head>
+  <body id="game">
+    <div class="field">
+      <div class="container">
+        <div class="tile" data-index="0" id="0"></div>
+        <div class="tile" data-index="1" id="1"></div>
+        <div class="tile" data-index="2" id="2"></div>
+      </div>
+      <div class="container">
+        <div class="tile" data-index="3" id="3"></div>
+        <div class="tile" data-index="4" id="4"></div>
+        <div class="tile" data-index="5" id="5"></div>
+      </div>
+      <div class="container">
+        <div class="tile" data-index="6" id="6"></div>
+        <div class="tile" data-index="7" id="7"></div>
+        <div class="tile" data-index="8" id="8"></div>
+      </div>
+    </div>
+    <p id="timer">300</p>
 
-<div id="puzzleContainer">
-    <canvas id="canvas"></canvas>
-</div>
+    <div class="mainArea1">
+      <button onclick="location.reload()">New Game(リロード)</button>
+    </div>
 
-<div class="caption">
-    <img id="linkImage" src="line_image.png" alt="Link Image" usemap="#linkmap">
-    <p>スタッフ作りました</p>
-</div>
-<map name="linkmap">
-    <area shape="rect" coords="34,44,270,350" alt="link" href="http://example.com">
-</map>
+    <h2>・完成すると下記のようになります</h2>
 
-<script src="script.js"></script>
+    <div class="mainArea2">
+      <img src="img/ヒント.png" alt="" width="380" height="380" border="0" />
+    </div>
 
-</body>
+    <h2>上記の画像を参考にパズルを合わせよう！</h2>
+
+    <script src="index.js"></script>
+  </body>
 </html>
