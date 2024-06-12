@@ -12,11 +12,11 @@
 /* パズルコンテナのスタイル */
 #puzzle-container {
     display: grid;
-    grid-template-columns: repeat(5, 75px); /* 変更 */
-    grid-template-rows: repeat(5, 75px); /* 変更 */
+    grid-template-columns: repeat(5, 58px); /* 変更 */
+    grid-template-rows: repeat(5, 58px); /* 変更 */
     gap: 2px;
-    width: 400px; /* 変更 */
-    height: 400px; /* 変更 */
+    width: 300px; /* 変更 */
+    height: 300px; /* 変更 */
     background-color: #ddd99b;
     border: 20px solid #333;
     padding: 10px;
