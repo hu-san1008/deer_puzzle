@@ -1,7 +1,7 @@
 // script.js
 
-const rows = 4; // パズルの行数
-const cols = 4; // パズルの列数
+const rows = 5; // パズルの行数
+const cols = 5; // パズルの列数
 const imageSrc = 'deer.png'; // 画像のパス
 
 const container = document.getElementById('puzzle-container');

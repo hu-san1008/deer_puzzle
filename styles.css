@@ -12,13 +12,13 @@
 /* パズルコンテナのスタイル */
 #puzzle-container {
     display: grid;
-    grid-template-columns: repeat(4, 75px); /* 変更 */
-    grid-template-rows: repeat(4, 75px); /* 変更 */
-    gap: 5px;
-    width: 350px; /* 変更 */
-    height: 350px; /* 変更 */
-    background-color: #fff;
-    border: 2px solid #333;
+    grid-template-columns: repeat(5, 75px); /* 変更 */
+    grid-template-rows: repeat(5, 75px); /* 変更 */
+    gap: 2px;
+    width: 400px; /* 変更 */
+    height: 400px; /* 変更 */
+    background-color: #ddd99b;
+    border: 20px solid #333;
     padding: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
