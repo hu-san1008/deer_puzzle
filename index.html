@@ -1,15 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jigsaw Puzzle</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<title>鳩でもわかるジグソーパズル</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    #shuffle {
+        width: 100px;
+        margin-left: 20px;
+    }
+    #how-to-play {
+        margin-left: 20px;
+    }
+    #time {
+        margin-left: 20px;
+        font-weight: bold;
+    }
+</style>
 </head>
+
 <body>
-    <div id="puzzle-container" class="puzzle-container"></div>
-    <script src="script.js"></script>
-    <h2>・完成図</h2>
-    <img class="centered-image" src="result.png" alt="音階" width="380" height="340">
+
+<p>
+    <button id = "shuffle" onclick="shuffle()">シャッフル</button>
+    <span id = "time"></span>
+</p>
+<p id = "how-to-play">各ピースはドラッグ＆ドロップで移動できます。</p>
+
+<canvas id="can"></canvas>
+
+<script src="index.js"></script>
+
 </body>
 </html>
