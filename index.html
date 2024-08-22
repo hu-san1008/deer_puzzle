@@ -4,16 +4,28 @@
 <meta charset="UTF-8">
 <title>鳩でもわかるジグソーパズル</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="styles.css">
+<style>
+    #shuffle {
+        width: 100px;
+        margin-left: 20px;
+    }
+    #how-to-play {
+        margin-left: 20px;
+    }
+    #time {
+        margin-left: 20px;
+        font-weight: bold;
+    }
+</style>
 </head>
 
 <body>
 
-<div id="controls">
-    <button id="shuffle" onclick="shuffle()">シャッフル</button>
-    <span id="time">タイマー: 00:00</span>
-</div>
-<p id="how-to-play">各ピースはドラッグ＆ドロップで移動できます。</p>
+<p>
+    <button id = "shuffle" onclick="shuffle()">シャッフル</button>
+    <span id = "time"></span>
+</p>
+<p id = "how-to-play">各ピースはドラッグ＆ドロップで移動できます。</p>
 
 <canvas id="can"></canvas>
 
