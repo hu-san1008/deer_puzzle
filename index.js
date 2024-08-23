@@ -1,138 +1,143 @@
-const pieceSize = 80;
+const can = document.getElementById('puzzleCanvas');
+const ctx = can.getContext('2d');
+const pieceSize = 100; // ピースのサイズ
+let pieces = [];
+let movingPiece = null;
 
-let can = document.getElementById('can');
-let ctx = can.getContext('2d');
-let pieces = []; // Pieceオブジェクトを格納する変数
+const img = new Image();
+img.src = 'img/deer.png'; // ここに画像のパスを指定してください
 
-let colMax = 0; // ピースは横に何個並ぶか？
-let rowMax = 0; // ピースは縦に何個並ぶか？
-
+// ピースのオブジェクトを定義
 class Piece {
-    constructor(image, outline, x, y){
-        this.Image = image;
-        this.Outline = outline;
+    constructor(x, y, srcX, srcY) {
         this.X = x;
         this.Y = y;
-
-        this.OriginalCol = Math.round(x / pieceSize); // 本来の位置
-        this.OriginalRow = Math.round(y / pieceSize);
+        this.srcX = srcX;
+        this.srcY = srcY;
     }
 
-    Draw(){
-        ctx.drawImage(this.Image, this.X, this.Y);
-        ctx.drawImage(this.Outline, this.X, this.Y);
+    IsClick(x, y) {
+        return x > this.X && x < this.X + pieceSize && y > this.Y && y < this.Y + pieceSize;
     }
 
-    IsClick(x, y){
-        let s = pieceSize / 4;
-        return !(x < this.X + s || this.X + s * 5 < x || y < this.Y + s || this.Y + s * 5 < y);
+    draw() {
+        ctx.drawImage(img, this.srcX, this.srcY, pieceSize, pieceSize, this.X, this.Y, pieceSize, pieceSize);
     }
 }
 
-window.onload = async() => {
-    let sourceImage = await createSourceImage();
-
-    // ピースは縦横何列必要か？
-    colMax = Math.floor(sourceImage.width / pieceSize);
-    rowMax = Math.floor(sourceImage.height / pieceSize);
-
-    // canvasのサイズはピースが占める面積の2倍とする
-    can.width = colMax * pieceSize * 2;
-    can.height = rowMax * pieceSize * 2;
-
-    pieces = [];
-    for(let row = 0; row < rowMax; row++){
-        for(let col = 0; col < colMax; col++){
-            let image = await createPiece(sourceImage, row, col, rowMax, colMax, false);
-            let outline = await createPiece(sourceImage, row, col, rowMax, colMax, true);
-            pieces.push(new Piece(image, outline, col * pieceSize, row * pieceSize));
-        }
+// ピースをシャッフルする関数
+function shufflePieces() {
+    for (let i = 0; i < pieces.length; i++) {
+        const randIndex = Math.floor(Math.random() * pieces.length);
+        const tempX = pieces[i].X;
+        const tempY = pieces[i].Y;
+        pieces[i].X = pieces[randIndex].X;
+        pieces[i].Y = pieces[randIndex].Y;
+        pieces[randIndex].X = tempX;
+        pieces[randIndex].Y = tempY;
     }
     drawAll();
 }
 
-async function createSourceImage(){
-    let image = new Image();
-    return await new Promise(resolve => {
-        image.src = 'img/deer.png'; // 画像のパスを指定
-        image.onload = () => resolve(image);
-    });
+// すべてのピースを描画する関数
+function drawAll() {
+    ctx.clearRect(0, 0, can.width, can.height);
+    pieces.forEach(piece => piece.draw());
 }
 
-async function createPiece(sourceImage, row, col, rowMax, colMax, outlineOnly){
-    let canvas = document.createElement('canvas');
-    let ctx = canvas.getContext('2d');
+// イベントリスナー
+document.getElementById('shuffleButton').addEventListener('click', shufflePieces);
 
-    let s = pieceSize / 4;
-    canvas.width = s * 6;
-    canvas.height = s * 6;
+window.addEventListener('touchstart', (ev) => {
+    ev.preventDefault();
 
-    if (ctx == null) return;
-
-    ctx.beginPath();
-    ctx.moveTo(s, s);
-    ctx.lineTo(s * 2, s);
-
-    if(row > 0){
-        if((row + col) % 2 == 0)
-            ctx.arc(s * 3, s, s, Math.PI, Math.PI * 2, false);
-        else
-            ctx.arc(s * 3, s, s, Math.PI, Math.PI * 2, true);
+    if (ev.touches.length != 1) {
+        enableScrollOnTouchMove(ev, true);
+        return;
     }
 
-    ctx.lineTo(s * 5, s);
-    ctx.lineTo(s * 5, s * 2);
+    let x = ev.touches[0].pageX;
+    let y = ev.touches[0].pageY;
 
-    if(col < colMax - 1){
-        if((row + col) % 2 == 1)
-            ctx.arc(s * 5, s * 3, s, Math.PI * 3 / 2, Math.PI / 2, false);
-        else
-            ctx.arc(s * 5, s * 3, s, Math.PI * 3 / 2, Math.PI / 2, true);
+    const rect = can.getBoundingClientRect();
+    let ps = pieces.filter(piece => piece.IsClick(x - rect.left, y - rect.top));
+
+    if (ps.length == 0) {
+        enableScrollOnTouchMove(ev, true);
+        return;
     }
 
-    ctx.lineTo(s * 5, s * 5);
-    ctx.lineTo(s * 4, s * 5);
+    movingPiece = ps[ps.length - 1];
+});
 
-    if(row < rowMax - 1){
-        if((row + col) % 2 == 0)
-            ctx.arc(s * 3, s * 5, s, Math.PI * 0, Math.PI, false);
-        else
-            ctx.arc(s * 3, s * 5, s, Math.PI * 0, Math.PI, true);
+window.addEventListener('touchmove', (e) => {
+    if (e.touches.length != 1) return;
+
+    if (movingPiece != null) {
+        const rect = can.getBoundingClientRect();
+        let x = e.touches[0].pageX;
+        let y = e.touches[0].pageY;
+
+        let newX = x - rect.left - pieceSize * 0.75;
+        let newY = y - rect.top - pieceSize * 0.75;
+
+        if (newX < -pieceSize / 2) newX = -pieceSize / 2;
+        if (newY < -pieceSize / 2) newY = -pieceSize / 2;
+        if (newX > can.width - pieceSize / 2) newX = can.width - pieceSize / 2;
+        if (newY > can.height - pieceSize * 0.75) newY = can.height - pieceSize * 0.75;
+
+        movingPiece.X = newX;
+        movingPiece.Y = newY;
+
+        drawAll();
     }
+});
 
-    ctx.lineTo(s, s * 5);
-    ctx.lineTo(s, s * 4);
+window.addEventListener('touchend', (e) => {
+    if (movingPiece != null) {
+        let col = Math.round(movingPiece.X / pieceSize);
+        let row = Math.round(movingPiece.Y / pieceSize);
 
-    if(col > 0){
-        if((row + col) % 2 == 1)
-            ctx.arc(s, s * 3, s, Math.PI / 2, Math.PI * 3 / 2, false);
-        else
-            ctx.arc(s, s * 3, s, Math.PI / 2, Math.PI * 3 / 2, true);
+        if (col < 0) col = 0;
+        if (row < 0) row = 0;
+
+        if (row < 4 && col < 4) {
+            let ps = pieces.filter(_ => _.X == col * pieceSize && _.Y == row * pieceSize);
+            if (ps.length == 0) {
+                if (Math.abs(col * pieceSize - movingPiece.X) < 20 && Math.abs(row * pieceSize - movingPiece.Y) < 20) {
+                    movingPiece.X = col * pieceSize;
+                    movingPiece.Y = row * pieceSize;
+                }
+            }
+        }
+
+        pieces = pieces.filter(piece => piece != movingPiece);
+        pieces.push(movingPiece);
+        movingPiece = null;
+
+        drawAll();
     }
+    enableScrollOnTouchMove(e, false);
+});
 
-    ctx.closePath();
-    ctx.clip();
+// スクロールの制御
+function disableScroll(e) {
+    e.preventDefault();
+}
 
-    ctx.strokeStyle = '#fff';
-    if(outlineOnly)
-        ctx.stroke();
+function enableScrollOnTouchMove(e, enable) {
+    if (!enable)
+        window.addEventListener('touchmove', disableScroll, { passive: false });
     else
-        ctx.drawImage(sourceImage, s - s * 4 * col, s - s * 4 * row);
-
-    let base64 = canvas.toDataURL("image/png", 1);
-    canvas.remove();
-
-    return await createImage(base64);
+        window.removeEventListener('touchmove', disableScroll);
 }
 
-async function createImage(base64){
-    let image = new Image();
-    return await new Promise(resolve => {
-        image.src = base64;
-        image.onload = () => resolve(image);
-    });
-}
-
-function drawAll(){
-    pieces.forEach(piece => piece.Draw());
-}
+// イメージが読み込まれた後にピースを作成
+img.onload = () => {
+    for (let y = 0; y < 4; y++) {
+        for (let x = 0; x < 4; x++) {
+            pieces.push(new Piece(x * pieceSize, y * pieceSize, x * pieceSize, y * pieceSize));
+        }
+    }
+    shufflePieces();
+};
