@@ -1,35 +1,35 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<title>鳩でもわかるジグソーパズル</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-    #shuffle {
-        width: 100px;
-        margin-left: 20px;
-    }
-    #how-to-play {
-        margin-left: 20px;
-    }
-    #time {
-        margin-left: 20px;
-        font-weight: bold;
-    }
-</style>
+    <meta charset="UTF-8">
+    <title>ジグソーパズル</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        #shuffle {
+            width: 100px;
+            margin-left: 20px;
+        }
+        #how-to-play {
+            margin-left: 20px;
+        }
+        #time {
+            margin-left: 20px;
+            font-weight: bold;
+        }
+        canvas {
+            display: block;
+            margin: 20px auto;
+            border: 1px solid black;
+        }
+    </style>
 </head>
-
 <body>
-
-<p>
-    <button id = "shuffle" onclick="shuffle()">シャッフル</button>
-    <span id = "time"></span>
-</p>
-<p id = "how-to-play">各ピースはドラッグ＆ドロップで移動できます。(スマ)</p>
-
-<canvas id="can"></canvas>
-
-<script src="index.js"></script>
-
+    <p>
+        <button id="shuffle">シャッフル</button>
+        <span id="time"></span>
+    </p>
+    <p id="how-to-play">各ピースはドラッグ＆ドロップで移動できます。</p>
+    <canvas id="can"></canvas>
+    <script src="./index.js"></script>
 </body>
 </html>
