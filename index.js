@@ -269,3 +269,106 @@ function check(){
         $time.style.color = '#f00'; // タイムを赤で表示
     }
 }
+function disableScroll(e) {
+    e.preventDefault();
+}
+
+// これでフリック時のスクロールを禁止できる
+window.addEventListener('touchmove', disableScroll, { passive: false });
+
+// これでフリック時のスクロールを許可できる
+window.removeEventListener('touchmove', disableScroll);
+function enableScrollOnTouchMove(e, enable){
+    if(!enable)
+        window.addEventListener('touchmove', disableScroll, { passive: false });
+    else
+        window.removeEventListener('touchmove', disableScroll);
+}
+window.addEventListener('touchstart', (ev) => {
+    ev.preventDefault();     // デフォルトイベントをキャンセル
+
+    if(ev.touches.length != 1){ // 触れている指が1でない場合
+        enableScrollOnTouchMove(ev, true); // フリックでスクロールできるようにする
+        return;
+    }
+
+    let x = ev.touches[0].pageX; // 触れている指に関する情報を取得
+    let y = ev.touches[0].pageY; // 触れている指に関する情報を取得
+
+    const rect = can.getBoundingClientRect();
+
+    let ps = pieces.filter(piece => piece.IsClick(x - rect.left, y - rect.top) );
+    if(ps.length == 0){
+        console.log('どれもクリックされていない');
+        enableScrollOnTouchMove(ev, true); // フリックでスクロールできるようにする
+        return;
+    }
+
+    movingPiece = ps[ps.length - 1]; // 一番手前に描画されているものを取得
+});
+window.addEventListener('touchmove', (e) => {
+    if(e.touches.length != 1)
+        return;
+
+    if(movingPiece != null){
+        const rect = can.getBoundingClientRect();
+
+        let x = e.touches[0].pageX; // 触れている指に関する情報を取得
+        let y = e.touches[0].pageY; // 触れている指に関する情報を取得
+
+        let newX = x - rect.left - pieceSize * 0.75;
+        let newY = y - rect.top - pieceSize * 0.75;
+
+        // 見えない位置に移動してしまうのを防ぐ
+        if(newX <  - pieceSize / 2)
+            newX =  - pieceSize / 2;
+        if(newY <  - pieceSize / 2)
+            newY =  - pieceSize / 2;
+        if(newX > can.width - pieceSize / 2)
+            newX = can.width - pieceSize / 2;
+        if(newY > can.height - pieceSize * 0.75)
+            newY = can.height - pieceSize * 0.75;
+
+        movingPiece.X = newX;
+        movingPiece.Y = newY;
+
+        drawAll();
+    }
+});
+window.addEventListener('touchend', (e) => {
+    if(movingPiece != null){
+        let col = Math.round(movingPiece.X / pieceSize);
+        let row = Math.round(movingPiece.Y / pieceSize);
+
+        if(col < 0)
+            col = 0;
+        if(row < 0)
+            row = 0;
+
+        if(row < rowMax && col < colMax){
+            let ps = pieces.filter(_ => _.X == col * pieceSize && _.Y == row * pieceSize);
+            if(ps.length == 0){
+                // そこにピースがなくズレが小さいときだけフィットさせる
+                if(Math.abs(col * pieceSize - movingPiece.X) < 20 && Math.abs(row * pieceSize - movingPiece.Y) < 20){
+                    movingPiece.X = col * pieceSize;
+                    movingPiece.Y = row * pieceSize;
+                }
+            }
+        }
+
+        // 移動したピースを最前面に描画する
+        pieces = pieces.filter(piece => piece != movingPiece);
+        pieces.push(movingPiece);
+
+        movingPiece = null;
+
+        drawAll();
+        check();
+    }
+    enableScrollOnTouchMove(e, false);  // フリックでスクロールできないようにする
+});
+// リロードの抑止（完璧ではない）
+window.addEventListener('beforeunload', (ev) => {
+    ev.preventDefault();
+    ev.returnValue = '';
+});
