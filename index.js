@@ -1,4 +1,4 @@
-const pieceSize = 70;
+const pieceSize = 60;
 
 let can = document.getElementById('can');
 let ctx = can.getContext('2d');
@@ -43,7 +43,7 @@ window.onload = async() => {
 
     // canvasのサイズはピースが占める面積の2倍とする
     can.width = colMax * pieceSize * 1;
-    can.height = rowMax * pieceSize * 2;
+    can.height = rowMax * pieceSize * 1.5;
 
     pieces = [];
     for(let row = 0; row < rowMax; row++){
