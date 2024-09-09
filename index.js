@@ -42,7 +42,7 @@ window.onload = async() => {
     rowMax = Math.floor(sourceImage.height / pieceSize);
 
     // canvasのサイズはピースが占める面積の2倍とする
-    can.width = colMax * pieceSize * 1.2;
+    can.width = colMax * pieceSize * 2;
     can.height = rowMax * pieceSize * 2;
 
     pieces = [];
