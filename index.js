@@ -1,4 +1,4 @@
-const pieceSize = 40;
+const pieceSize = 50;
 
 let can = document.getElementById('can');
 let ctx = can.getContext('2d');

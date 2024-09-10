@@ -5,66 +5,16 @@
 <title>奈良の鹿さんパズル(deer Puzzle)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f4f4f4;
-        text-align: center;
-    }
-
     #shuffle {
-        width: 150px;
-        padding: 10px 20px;
-        margin: 10px 0;
-        font-size: 1.2em;
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
+        width: 100px;
+        margin-left: 20px;
     }
-
-    #shuffle:hover {
-        background-color: #45a049;
-    }
-
     #how-to-play {
-        font-size: 1em;
-        margin: 20px;
+        margin-left: 20px;
     }
-
     #time {
-        font-size: 1.5em;
+        margin-left: 20px;
         font-weight: bold;
-        color: #333;
-        display: block;
-        margin-top: 10px;
-    }
-
-    canvas {
-        width: 90%;
-        max-width: 600px;
-        height: auto;
-        margin: 20px auto;
-        border: 2px solid #ccc;
-        display: block;
-        background-color: #fff;
-    }
-
-    @media (min-width: 768px) {
-        #shuffle {
-            width: 200px;
-            font-size: 1.5em;
-        }
-
-        #how-to-play {
-            font-size: 1.2em;
-        }
-
-        #time {
-            font-size: 2em;
-        }
     }
 </style>
 </head>
@@ -72,10 +22,10 @@
 <body>
 
 <p>
-    <button id="shuffle" onclick="shuffle()">シャッフル</button>
-    <span id="time"></span>
+    <button id = "shuffle" onclick="shuffle()">シャッフル</button>
+    <span id = "time"></span>
 </p>
-<p id="how-to-play">各ピースはドラッグ＆ドロップで移動できます。(画像サイズ変更2)</p>
+<p id = "how-to-play">各ピースはドラッグ＆ドロップで移動できます。(画像サイズ変更2)</p>
 
 <canvas id="can"></canvas>
 
