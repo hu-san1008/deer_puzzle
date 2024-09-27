@@ -2,6 +2,8 @@ const pieceSize = 50;
 
 let can = document.getElementById('can');
 let ctx = can.getContext('2d');
+let can2 = document.getElementById('can2');
+let ctx2 = can2.getContext('2d');
 let pieces = []; // Pieceオブジェクトを格納する変数
 
 let colMax = 0; // ピースは横に何個並ぶか？
@@ -163,23 +165,41 @@ function drawAll(){
         movingPiece.Draw();
 }
 
-window.addEventListener('mousedown', (ev) =>{
+window.addEventListener('mousedown', (ev) => {
     if(ev.button != 0)
         return;
 
-    const rect = can.getBoundingClientRect();
+    const rect1 = can.getBoundingClientRect();
+    const rect2 = can2.getBoundingClientRect();
 
-    let ps = pieces.filter(piece => piece.IsClick(ev.clientX - rect.left, ev.clientY - rect.top));
-    if(ps.length == 0){
-        console.log('どれもクリックされていない');
+    // canvas2上のピースをクリックした場合
+    let ps2 = pieces.filter(piece => piece.IsClick(ev.clientX - rect2.left, ev.clientY - rect2.top));
+    if(ps2.length > 0) {
+        console.log('canvas2のピースがクリックされました');
+        movingPiece = ps2[0];
+        oldX = movingPiece.X;
+        oldY = movingPiece.Y;
+
+        // canvas2からcanvas1へピースを移動
+        movingPiece.X = ev.clientX - rect1.left - pieceSize * 0.75;
+        movingPiece.Y = ev.clientY - rect1.top - pieceSize * 0.75;
+
+        drawAll(); // canvas1で再描画
         return;
     }
 
-    console.log(`${ps[0].X}, ${ps[0].Y}`);
+    // 既存のcanvas1上での処理はそのまま
+    let ps = pieces.filter(piece => piece.IsClick(ev.clientX - rect1.left, ev.clientY - rect1.top));
+    if(ps.length == 0){
+        console.log('canvas1ではどれもクリックされていない');
+        return;
+    }
+
     movingPiece = ps[0];
     oldX = ps[0].X;
     oldY = ps[0].Y;
 });
+
 
 window.addEventListener('mousemove', (ev) =>{
     if(movingPiece != null){
@@ -238,19 +258,24 @@ let time = 0;
 let $time = document.getElementById('time');
 
 function shuffle(){
-    let arr = [...pieces]; // 配列のコピーを作成
+    let arr = [...pieces]; // ピース配列のコピーを作成
+    ctx2.clearRect(0, 0, can2.width, can2.height); // canvas2のクリア
 
     for(let row = 0; row < rowMax; row++){
         for(let col = 0; col < colMax; col++){
             let r = Math.floor(Math.random() * arr.length);
             arr[r].X = col * pieceSize;
             arr[r].Y = row * pieceSize;
-            arr.splice(r, 1);
+
+            // canvas2にシャッフルされたピースを描画
+            ctx2.drawImage(arr[r].Image, arr[r].X, arr[r].Y);
+            ctx2.drawImage(arr[r].Outline, arr[r].X, arr[r].Y);
+
+            arr.splice(r, 1); // 配列から要素を削除
         }
     }
-    drawAll();
 
-    // 時間をカウント
+    // canvas1のタイマー設定などはそのまま維持
     time = 0;
     clearInterval(timer);
     timer = setInterval(() => {
@@ -259,6 +284,7 @@ function shuffle(){
         $time.innerHTML = `${time} 秒`;
     }, 1000);
 }
+
 
 function check(){
     let ok = pieces.every(piece => piece.Check());
