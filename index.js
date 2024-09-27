@@ -46,6 +46,9 @@ window.onload = async() => {
     // canvasのサイズはピースが占める面積の2倍とする
     can.width = colMax * pieceSize * 1.2;
     can.height = rowMax * pieceSize * 2;
+    can2.width = colMax * pieceSize * 1.2;
+    can2.height = rowMax * pieceSize * 2;
+
 
     pieces = [];
     for(let row = 0; row < rowMax; row++){
