@@ -1,0 +1,30 @@
+body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #f5ecc8 !important;
+  }
+  
+  .navbar.bg-body-tertiary {
+    background-color: #24f85d !important;
+    min-height: 98px !important;
+  }
+  
+  .navbar-toggler {
+    background-color: white !important;
+  }
+
+#shuffle {
+    width: 100px !important;
+    margin-left: 20px !important;
+}
+#how-to-play {
+    margin-left: 20px !important;
+}
+#time {
+    margin-left: 20px !important;
+    font-weight: bold !important;
+}
+
+p {
+    padding: 7px !important;
+  }

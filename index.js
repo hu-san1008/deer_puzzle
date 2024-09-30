@@ -2,8 +2,6 @@ const pieceSize = 50;
 
 let can = document.getElementById('can');
 let ctx = can.getContext('2d');
-let can2 = document.getElementById('can2');
-let ctx2 = can2.getContext('2d');
 let pieces = []; // Pieceオブジェクトを格納する変数
 
 let colMax = 0; // ピースは横に何個並ぶか？
@@ -46,8 +44,6 @@ window.onload = async() => {
     // canvasのサイズはピースが占める面積の2倍とする
     can.width = colMax * pieceSize * 1.2;
     can.height = rowMax * pieceSize * 2;
-    can2.width = colMax * pieceSize * 1.2;
-    can2.height = rowMax * pieceSize * 2;
 
     pieces = [];
     for(let row = 0; row < rowMax; row++){
@@ -167,41 +163,23 @@ function drawAll(){
         movingPiece.Draw();
 }
 
-window.addEventListener('mousedown', (ev) => {
+window.addEventListener('mousedown', (ev) =>{
     if(ev.button != 0)
         return;
 
-    const rect1 = can.getBoundingClientRect();
-    const rect2 = can2.getBoundingClientRect();
+    const rect = can.getBoundingClientRect();
 
-    // canvas2上のピースをクリックした場合
-    let ps2 = pieces.filter(piece => piece.IsClick(ev.clientX - rect2.left, ev.clientY - rect2.top));
-    if(ps2.length > 0) {
-        console.log('canvas2のピースがクリックされました');
-        movingPiece = ps2[0];
-        oldX = movingPiece.X;
-        oldY = movingPiece.Y;
-
-        // canvas2からcanvas1へピースを移動
-        movingPiece.X = ev.clientX - rect1.left - pieceSize * 0.75;
-        movingPiece.Y = ev.clientY - rect1.top - pieceSize * 0.75;
-
-        drawAll(); // canvas1で再描画
-        return;
-    }
-
-    // 既存のcanvas1上での処理はそのまま
-    let ps = pieces.filter(piece => piece.IsClick(ev.clientX - rect1.left, ev.clientY - rect1.top));
+    let ps = pieces.filter(piece => piece.IsClick(ev.clientX - rect.left, ev.clientY - rect.top));
     if(ps.length == 0){
-        console.log('canvas1ではどれもクリックされていない');
+        console.log('どれもクリックされていない');
         return;
     }
 
+    console.log(`${ps[0].X}, ${ps[0].Y}`);
     movingPiece = ps[0];
     oldX = ps[0].X;
     oldY = ps[0].Y;
 });
-
 
 window.addEventListener('mousemove', (ev) =>{
     if(movingPiece != null){
@@ -236,21 +214,161 @@ window.addEventListener('mouseup', (ev) =>{
             row = 0;
 
         if(row < rowMax && col < colMax){
+            let ps = pieces.filter(_ => _.X == col * pieceSize && _.Y == row * pieceSize);
+            if(ps.length == 0){
                 movingPiece.X = col * pieceSize;
                 movingPiece.Y = row * pieceSize;
-            } else {
-                // ピースを元の位置に戻す
+            }
+            else {
                 movingPiece.X = oldX;
+                movingPiece.Y =
                 movingPiece.Y = oldY;
             }
-    
-            // ピースが正しい位置に配置されているかを確認
-            if(movingPiece.Check()){
-                console.log('ピースが正しい位置に配置されました');
-            }
-    
-            drawAll();
-            movingPiece = null; // 移動終了
         }
-    });
-    
+
+        movingPiece = null;
+
+        drawAll();
+        check(); // 完成したかのチェック
+    }
+});
+
+let timer = null;
+let time = 0;
+let $time = document.getElementById('time');
+
+function shuffle(){
+    let arr = [...pieces]; // 配列のコピーを作成
+
+    for(let row = 0; row < rowMax; row++){
+        for(let col = 0; col < colMax; col++){
+            let r = Math.floor(Math.random() * arr.length);
+            arr[r].X = col * pieceSize;
+            arr[r].Y = row * pieceSize;
+            arr.splice(r, 1);
+        }
+    }
+    drawAll();
+
+    // 時間をカウント
+    time = 0;
+    clearInterval(timer);
+    timer = setInterval(() => {
+        time++;
+        $time.style.color = '#000';
+        $time.innerHTML = `${time} 秒`;
+    }, 1000);
+}
+
+function check(){
+    let ok = pieces.every(piece => piece.Check());
+    if(ok){
+        clearInterval(timer);
+        $time.style.color = '#0f0'; // 成功した場合、タイムを緑で表示
+    } else {
+        $time.style.color = '#f00'; // タイムを赤で表示
+    }
+}
+function disableScroll(e) {
+    e.preventDefault();
+}
+
+// これでフリック時のスクロールを禁止できる
+window.addEventListener('touchmove', disableScroll, { passive: false });
+
+// これでフリック時のスクロールを許可できる
+window.removeEventListener('touchmove', disableScroll);
+function enableScrollOnTouchMove(e, enable){
+    if(!enable)
+        window.addEventListener('touchmove', disableScroll, { passive: false });
+    else
+        window.removeEventListener('touchmove', disableScroll);
+}
+window.addEventListener('touchstart', (ev) => {
+    ev.preventDefault();     // デフォルトイベントをキャンセル
+
+    if(ev.touches.length != 1){ // 触れている指が1でない場合
+        enableScrollOnTouchMove(ev, true); // フリックでスクロールできるようにする
+        return;
+    }
+
+    let x = ev.touches[0].pageX; // 触れている指に関する情報を取得
+    let y = ev.touches[0].pageY; // 触れている指に関する情報を取得
+
+    const rect = can.getBoundingClientRect();
+
+    let ps = pieces.filter(piece => piece.IsClick(x - rect.left, y - rect.top) );
+    if(ps.length == 0){
+        console.log('どれもクリックされていない');
+        enableScrollOnTouchMove(ev, true); // フリックでスクロールできるようにする
+        return;
+    }
+
+    movingPiece = ps[ps.length - 1]; // 一番手前に描画されているものを取得
+});
+window.addEventListener('touchmove', (e) => {
+    if(e.touches.length != 1)
+        return;
+
+    if(movingPiece != null){
+        const rect = can.getBoundingClientRect();
+
+        let x = e.touches[0].pageX; // 触れている指に関する情報を取得
+        let y = e.touches[0].pageY; // 触れている指に関する情報を取得
+
+        let newX = x - rect.left - pieceSize * 0.75;
+        let newY = y - rect.top - pieceSize * 0.75;
+
+        // 見えない位置に移動してしまうのを防ぐ
+        if(newX <  - pieceSize / 2)
+            newX =  - pieceSize / 2;
+        if(newY <  - pieceSize / 2)
+            newY =  - pieceSize / 2;
+        if(newX > can.width - pieceSize / 2)
+            newX = can.width - pieceSize / 2;
+        if(newY > can.height - pieceSize * 0.75)
+            newY = can.height - pieceSize * 0.75;
+
+        movingPiece.X = newX;
+        movingPiece.Y = newY;
+
+        drawAll();
+    }
+});
+window.addEventListener('touchend', (e) => {
+    if(movingPiece != null){
+        let col = Math.round(movingPiece.X / pieceSize);
+        let row = Math.round(movingPiece.Y / pieceSize);
+
+        if(col < 0)
+            col = 0;
+        if(row < 0)
+            row = 0;
+
+        if(row < rowMax && col < colMax){
+            let ps = pieces.filter(_ => _.X == col * pieceSize && _.Y == row * pieceSize);
+            if(ps.length == 0){
+                // そこにピースがなくズレが小さいときだけフィットさせる
+                if(Math.abs(col * pieceSize - movingPiece.X) < 20 && Math.abs(row * pieceSize - movingPiece.Y) < 20){
+                    movingPiece.X = col * pieceSize;
+                    movingPiece.Y = row * pieceSize;
+                }
+            }
+        }
+
+        // 移動したピースを最前面に描画する
+        pieces = pieces.filter(piece => piece != movingPiece);
+        pieces.push(movingPiece);
+
+        movingPiece = null;
+
+        drawAll();
+        check();
+    }
+    enableScrollOnTouchMove(e, false);  // フリックでスクロールできないようにする
+});
+// リロードの抑止（完璧ではない）
+window.addEventListener('beforeunload', (ev) => {
+    ev.preventDefault();
+    ev.returnValue = '';
+});
