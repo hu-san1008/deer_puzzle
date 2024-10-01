@@ -58,6 +58,11 @@ window.onload = async() => {
     can.width = colMax * pieceSize * 1.2;
     can.height = rowMax * pieceSize * 2;
 
+    // ここにシャッフルボタンのイベントリスナーを追加
+    document.getElementById('shuffle').addEventListener('click', function(e) {
+        e.preventDefault(); // シャッフル時のデフォルト動作を防ぐ
+    }, { passive: false });
+
     pieces = [];
     for(let row = 0; row < rowMax; row++){
         for(let col = 0; col < colMax; col++){
