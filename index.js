@@ -1,6 +1,19 @@
 const pieceSize = 50;
 
 let can = document.getElementById('can');
+// キャンバス内でのタッチ操作中にスクロールを無効化
+can.addEventListener('touchstart', function(e) {
+    e.preventDefault(); // デフォルトのスクロール動作を無効化
+}, { passive: false });
+
+can.addEventListener('touchmove', function(e) {
+    e.preventDefault(); // タッチ移動中のスクロールを無効化
+}, { passive: false });
+
+can.addEventListener('touchend', function(e) {
+    e.preventDefault(); // タッチ終了時にもスクロールを無効化
+}, { passive: false });
+
 let ctx = can.getContext('2d');
 let pieces = []; // Pieceオブジェクトを格納する変数
 
