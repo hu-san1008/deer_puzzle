@@ -2,16 +2,16 @@ body {
     margin: 0 !important;
     padding: 0 !important;
     background: #f5ecc8 !important;
-  }
+}
   
-  .navbar.bg-body-tertiary {
+.navbar.bg-body-tertiary {
     background-color: #24f85d !important;
     min-height: 98px !important;
-  }
+}
   
-  .navbar-toggler {
+.navbar-toggler {
     background-color: white !important;
-  }
+}
 
 #shuffle {
     width: 100px !important;
@@ -27,4 +27,4 @@ body {
 
 p {
     padding: 7px !important;
-  }
+}
