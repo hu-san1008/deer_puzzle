@@ -305,8 +305,7 @@ window.addEventListener('touchstart', (ev) => {
     }
 
     movingPiece = ps[ps.length - 1]; // 一番手前に描画されているものを取得
-}, { passive: false });
-
+});
 window.addEventListener('touchmove', (e) => {
     if(e.touches.length != 1)
         return;
@@ -367,7 +366,7 @@ window.addEventListener('touchend', (e) => {
         check();
     }
     enableScrollOnTouchMove(e, false);  // フリックでスクロールできないようにする
-}, { passive: false });
+});
 // リロードの抑止（完璧ではない）
 window.addEventListener('beforeunload', (ev) => {
     ev.preventDefault();
