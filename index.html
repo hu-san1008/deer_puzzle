@@ -1,59 +1,46 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-<meta charset="UTF-8">
-<title>奈良の鹿パズル(deer Puzzle)</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" media="screen" href="style.css" />
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5098024800134734"
-     crossorigin="anonymous"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AnimalPuzzle</title>
+    <link rel="icon" href="home_img/edps2.ico" />
+    <link rel="apple-touch-icon" href="home_img/edps.png" />
+    <link rel="stylesheet" media="screen" href="home.css" />
+  </head>
 
-     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
-     rel="stylesheet" 
-     integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" 
-     crossorigin="anonymous">
-   
-</head>
-
-<body>
+  <body>
     <header>
-        <nav class="navbar navbar-expand-lg bg-body-tertiary">
-            <div class="container-fluid">
-                <h2 class="navbar-brand" href="#">奈良の鹿パズル(deer Puzzle)</h2>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <button class="nav-link active fw-bold" aria-current="page" onclick="location.href='index.html'">Home</button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link fw-bold" onclick="location.href='privacy/privacy.html'">プライバシーポリシー</button>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link fw-bold" onclick="location.href='form/form.html'">お問い合わせ</button>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+      <h2>AnimalPuzzle</h2>
     </header>
-<p>写真を用いたパズルサイトです</p>
+
+    <p>好きな写真をタップすると遊べます。</p>
     <hr />
-<p>
-    <button id = "shuffle" onclick="shuffle()">シャッフル</button>
-    <span id = "time"></span>
-</p>
-<p id = "how-to-play">各ピースはドラッグ＆ドロップで移動できます。</p>
 
-<canvas id="can"></canvas>
+    <div class="image-container">
+      <!-- 柴犬パズルに関する記述-->
 
+      <div class="game">
+        <a href="dog/index.html">
+          <img class="img" src="home_img/dog.png" alt="柴犬パズルの画像" />
+        </a>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" 
-integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" 
-crossorigin="anonymous"></script>
-<script src="index.js"></script>
+        <h3 class="game_title">柴犬</h3>
+      </div>
 
-</body>
+      <!-- 鹿パズルに関する記述-->
+
+      <div class="game">
+        <a href="deer/index.html">
+          <img class="img" src="home_img/deer_hinto.png" alt="鹿パズルの画像" />
+        </a>
+
+        <h3 class="game_title">鹿</h3>
+      </div>
+
+      <!-- ここに各自リンクと画像を記載してください。-->
+    </div>
+
+    <script src="home.js"></script>
+  </body>
 </html>

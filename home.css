@@ -1,0 +1,72 @@
+body {
+  margin: 0;
+  padding: 0;
+  background: #f5ecc8;
+}
+
+header {
+  background-color: #65eb53;
+  color: #000000;
+  padding: 10px;
+}
+
+.container {
+  display: flex;
+  justify-content: center; /* 中央に配置 */
+  align-items: center; /* 中央に配置 */
+}
+
+img {
+  width: 138px;
+  height: 138px;
+  margin-right: 20px; /* 画像間の間隔を設定 */
+  padding: 12px;
+}
+
+p {
+  padding: 10px;
+}
+
+button {
+  background-color: #f53e3e;
+  color: white;
+  padding: 6px 12px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #d77b7b;
+}
+
+.image-container {
+  display: grid;
+  gap: 26px;
+  grid-template-columns: repeat(auto-fit, minmax(138px, 1fr));
+  margin-top: 6%;
+  margin-bottom: 50px;
+}
+
+.game {
+  float: left;
+  max-width: 184px;
+  width: 100%;
+  margin: auto;
+  display: block;
+  text-align: center;
+}
+
+.game_title {
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.img {
+  margin: auto;
+}
+
+a {
+  text-align: center;
+}

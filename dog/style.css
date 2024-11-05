@@ -1,0 +1,116 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #65eb53;
+    color: #000000;
+    padding: 20px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 24px;
+    margin-left: 20px;
+}
+
+p {
+    padding: 2px;
+  }
+
+
+#game {
+    background-color: antiquewhite;
+}
+.field {
+    margin: 40px auto;
+    padding: 0px;
+    border: 1px solid black;
+    width: 385px;
+    cursor: pointer;
+}
+.container {
+    width: 384px;
+    height: 133px;
+    margin: 0px auto;
+    text-align: center;
+    display: flex;
+    background-color: aquamarine;
+}
+.container .tile {
+    width: 128px;
+    border: 1px solid black;
+}
+
+div[data-index="1"] {
+    background: url("img/doge.png") no-repeat top center;
+    background-size: 300%;
+}
+div[data-index="2"] {
+    background: url("img/doge.png") no-repeat top right;
+    background-size: 300%;
+}
+div[data-index="3"] {
+    background: url("img/doge.png") no-repeat center left;
+    background-size: 300%;
+}
+div[data-index="4"] {
+    background: url("img/doge.png") no-repeat center center;
+    background-size: 300%;
+}
+div[data-index="5"] {
+    background: url("img/doge.png") no-repeat center right;
+    background-size: 300%;
+}
+div[data-index="6"] {
+    background: url("img/doge.png") no-repeat bottom left;
+    background-size: 300%;
+}
+div[data-index="7"] {
+    background: url("img/doge.png") no-repeat bottom center;
+    background-size: 300%;
+}
+div[data-index="8"] {
+    background: url("img/doge.png") no-repeat bottom right;
+    background-size: 300%;
+}
+h1{
+    text-align: center;
+}
+h2{
+    text-align: center;
+}
+b{
+    text-align: center;
+}
+
+.mainArea1{
+    text-align: center;
+}
+
+.mainArea2{
+    width:100%;
+    
+    text-align: center;
+}
+
+#timer{
+    font-size: 40px;
+    text-align: center;
+    color: red;
+    margin: 0px;
+}
+button {
+    background-color: #f53e3e;
+    color: white;
+    padding: 12px 24px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #d77b7b;
+}
